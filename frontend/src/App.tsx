@@ -1,7 +1,12 @@
 
-import { Navigate } from "react-router-dom"
+import { Routes, Route } from "react-router-dom";
+import Login from "./pages/Login";
+import MainMenu from "./pages/MainMenu";
 
 export default function App() {
- return <Navigate to="/login" replace />
+ <Routes>
+      <Route path="/" element={<Login />} />
+      <Route path="/main-menu" element={<MainMenu />} />
+    </Routes>
 }
 

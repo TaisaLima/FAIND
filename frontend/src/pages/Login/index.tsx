@@ -1,13 +1,16 @@
-import { useState } from "react"
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function Login() {
-  const [email, setEmail] = useState("")
-  const [senha, setSenha] = useState("")
+  const [email, setEmail] = useState("");
+  const [senha, setSenha] = useState("");
+  const navigate = useNavigate();
 
   const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault()
-    console.log("Login:", { email, senha })
-  }
+    e.preventDefault();
+    console.log("Login:", { email, senha });
+    navigate("/main-menu"); // força navegação
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-400 to-black">
@@ -15,7 +18,7 @@ export default function Login() {
         onSubmit={handleLogin}
         className="bg-white rounded-2xl shadow-lg p-8 w-full max-w-sm space-y-6"
       >
-        <h1 className="text-3xl font-bold text-center text-green-600">GEDAI</h1>
+        <h1 className="text-3xl font-bold text-center text-green-600">F.A.I.N.D</h1>
 
         <div className="flex flex-col gap-2">
           <label className="text-gray-700 font-medium">E-mail</label>
@@ -47,5 +50,5 @@ export default function Login() {
         </button>
       </form>
     </div>
-  )
+  );
 }
