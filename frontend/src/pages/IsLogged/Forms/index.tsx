@@ -1,27 +1,118 @@
 import React, { useState, ChangeEvent } from "react";
 import { useNavigate } from "react-router-dom";
+import { SliderInput } from "/src/components/forms/SliderInput";
 
- export default function Forms() {
+interface AvaliacaoTecnologia {
+  potencialInovacao: number;
+  possibilidadeEvolucao: number;
+  maturidadeTecnologica: number;
+  viabilidadeTecnica: number;
+}
+
+interface AvaliacaoMercado {
+  problemaIdentificado: number;
+  existeMercado: number;
+  publicoAlvoDefinido: number;
+  diferencialConcorrentes: number;
+}
+
+interface AvaliacaoGestao {
+  impactoSocialAmbiental: number;
+  clarezaParceirosFornecedores: number;
+  estruturaExecucao: number;
+}
+
+interface AvaliacaoCapital {
+  clarezaInvestimentos: number;
+  recursosFinanceiros: number;
+  identificacaoFontes: number;
+}
+
+export default function Forms() {
+  const navigate = useNavigate();
+
   const [nomeProjeto, setNomeProjeto] = useState<string>("");
+
   const [avaliacaoEmpreendedor, setAvaliacaoEmpreendedor] = useState<number>(5);
-  
-  const [avaliacaoTecnologia, setAvaliacaoTecnologia] = useState<number>(5);
 
-  const handleNomeProjetoChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setNomeProjeto(e.target.value);
+  const [avaliacaoTecnologia, setAvaliacaoTecnologia] = useState<AvaliacaoTecnologia>({
+    potencialInovacao: 5,
+    possibilidadeEvolucao: 5,
+    maturidadeTecnologica: 5,
+    viabilidadeTecnica: 5,
+  });
+
+  const [avaliacaoMercado, setAvaliacaoMercado] = useState<AvaliacaoMercado>({
+    problemaIdentificado: 5,
+    existeMercado: 5,
+    publicoAlvoDefinido: 5,
+    diferencialConcorrentes: 5,
+  });
+
+  const [avaliacaoGestao, setAvaliacaoGestao] = useState<AvaliacaoGestao>({
+    impactoSocialAmbiental: 5,
+    clarezaParceirosFornecedores: 5,
+    estruturaExecucao: 5,
+  });
+
+  const [avaliacaoCapital, setAvaliacaoCapital] = useState<AvaliacaoCapital>({
+    clarezaInvestimentos: 5,
+    recursosFinanceiros: 5,
+    identificacaoFontes: 5,
+  });
+
+  // Handlers gerais para mudanças em subcriterios
+
+  const handleTecnologiaChange = (key: keyof AvaliacaoTecnologia, value: number) => {
+    setAvaliacaoTecnologia((prev) => ({ ...prev, [key]: value }));
   };
 
-  const handleAvaliacaoChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setAvaliacaoEmpreendedor(Number(e.target.value));
+  const handleMercadoChange = (key: keyof AvaliacaoMercado, value: number) => {
+    setAvaliacaoMercado((prev) => ({ ...prev, [key]: value }));
   };
 
-  const handleCancelar = () => {
-    setNomeProjeto("");
-    setAvaliacaoEmpreendedor(5);
+  const handleGestaoChange = (key: keyof AvaliacaoGestao, value: number) => {
+    setAvaliacaoGestao((prev) => ({ ...prev, [key]: value }));
   };
 
-  const handleProximaSecao = () => {
-    alert("Deseja mesmo concluir a sua avaliação?");
+  const handleCapitalChange = (key: keyof AvaliacaoCapital, value: number) => {
+    setAvaliacaoCapital((prev) => ({ ...prev, [key]: value }));
+  };
+
+  const handleProximaSecao = async () => {
+    // Aqui você pode validar o formulário antes de enviar
+    if (!nomeProjeto) {
+      alert("Por favor, preencha o nome do projeto");
+      return;
+    }
+
+    // Montar payload com todos os dados
+    const payload = {
+      nomeProjeto,
+      avaliacaoEmpreendedor,
+      avaliacaoTecnologia,
+      avaliacaoMercado,
+      avaliacaoGestao,
+      avaliacaoCapital,
+    };
+
+    try {
+      const response = await fetch("https://seu-backend-api.com/avaliacoes", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        throw new Error("Erro ao enviar avaliação");
+      }
+
+      alert("Avaliação enviada com sucesso!");
+
+      navigate("/mainmenu");
+    } catch (error) {
+      alert("Erro: " + error);
+    }
   };
 
   return (
@@ -38,262 +129,138 @@ import { useNavigate } from "react-router-dom";
             id="nomeProjeto"
             type="text"
             value={nomeProjeto}
-            onChange={handleNomeProjetoChange}
+            onChange={(e) => setNomeProjeto(e.target.value)}
             placeholder="Insira aqui o nome do projeto"
             className="mt-1 block w-full rounded-md border border-neutral-300 px-3 py-2"
           />
         </label>
 
-        <label className="block mb-6" htmlFor="avaliacaoEmpreendedor">
-          <span className="text-xl font-normal text-neutral-800">1. Critério de avaliação: Empreendedor</span>
-          <p className="mt-2 text-neutral-700">
-            Os empreendedores envolvidos demonstram estar comprometidos com o desenvolvimento do negócio?
-          </p>
-          <input
+        <section className="mb-8">
+          <h2 className="text-xl font-semibold mb-4">1. Critério de avaliação: Empreendedor</h2>
+          <SliderInput
             id="avaliacaoEmpreendedor"
-            type="range"
-            min={0}
-            max={10}
+            label="Os empreendedores envolvidos demonstram estar comprometidos com o desenvolvimento do negócio?"
             value={avaliacaoEmpreendedor}
-            onChange={handleAvaliacaoChange}
-            className="w-full mt-2"
+            onChange={setAvaliacaoEmpreendedor}
           />
-          <div className="flex justify-between text-xs text-neutral-600 mt-1">
-            <span>0</span><span>1</span><span>2</span><span>3</span>
-            <span>4</span><span>5</span><span>6</span><span>7</span>
-            <span>8</span><span>9</span><span>10</span>
-          </div>
-        </label>
+        </section>
 
-
-
-        <label className="block mb-6" htmlFor="avaliacaoTecnologia">
-          <span className="text-xl font-normal text-neutral-800">2. Critério de avaliação: Tecnologia</span>
-         
-          <p className="mt-2 text-neutral-700">
-            Potencial para ou aplicação de soluções inovadoras
-          </p>
-          <input
-            id="avaliacaoTecnologia" type="range" min={0} max={10}  value={avaliacaoEmpreendedor}  onChange={handleAvaliacaoChange} className="w-full mt-2"
+        <section className="mb-8">
+          <h2 className="text-xl font-semibold mb-4">2. Critério de avaliação: Tecnologia</h2>
+          <SliderInput
+            id="potencialInovacao"
+            label="Potencial para ou aplicação de soluções inovadoras"
+            value={avaliacaoTecnologia.potencialInovacao}
+            onChange={(val) => handleTecnologiaChange("potencialInovacao", val)}
           />
-          <div className="flex justify-between text-xs text-neutral-600 mt-1">
-            <span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span>
-          </div>
-
-
-          <p className="mt-2 text-neutral-700">
-            Possibilidade de evolução dos produtos/serviços apresentados
-          </p>
-          <input
-            id="avaliacaoTecnologia" type="range" min={0} max={10}  value={avaliacaoEmpreendedor}  onChange={handleAvaliacaoChange} className="w-full mt-2"
+          <SliderInput
+            id="possibilidadeEvolucao"
+            label="Possibilidade de evolução dos produtos/serviços apresentados"
+            value={avaliacaoTecnologia.possibilidadeEvolucao}
+            onChange={(val) => handleTecnologiaChange("possibilidadeEvolucao", val)}
           />
-          <div className="flex justify-between text-xs text-neutral-600 mt-1">
-            <span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span>
-          </div>
-
-            <p className="mt-2 text-neutral-700">
-              A solução a ser ofertada possui maturidade tecnológica?
-          </p>
-          <input
-            id="avaliacaoTecnologia" type="range" min={0} max={10}  value={avaliacaoEmpreendedor}  onChange={handleAvaliacaoChange} className="w-full mt-2"
+          <SliderInput
+            id="maturidadeTecnologica"
+            label="A solução a ser ofertada possui maturidade tecnológica?"
+            value={avaliacaoTecnologia.maturidadeTecnologica}
+            onChange={(val) => handleTecnologiaChange("maturidadeTecnologica", val)}
           />
-          <div className="flex justify-between text-xs text-neutral-600 mt-1">
-            <span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span>
-          </div>
-
-          <p className="mt-2 text-neutral-700">Viabilidade técnica </p>
-              <input
-                id="avaliacaoTecnologia" type="range" min={0} max={10}  value={avaliacaoEmpreendedor}  onChange={handleAvaliacaoChange} className="w-full mt-2"
-              />
-          <div className="flex justify-between text-xs text-neutral-600 mt-1">
-            <span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span>
-          </div>
-
-
-        </label>
-
-         <label className="block mb-6" htmlFor="avaliacaoMercado">
-          <span className="text-xl font-normal text-neutral-800">3. Critério de avaliação: Mercado</span>
-         
-          <p className="mt-2 text-neutral-700">
-            O problema foi identificado?
-          </p>
-          <input
-            id="avaliacaoMercado" type="range" min={0} max={10}  value={avaliacaoEmpreendedor}  onChange={handleAvaliacaoChange} className="w-full mt-2"
+          <SliderInput
+            id="viabilidadeTecnica"
+            label="Viabilidade técnica"
+            value={avaliacaoTecnologia.viabilidadeTecnica}
+            onChange={(val) => handleTecnologiaChange("viabilidadeTecnica", val)}
           />
-          <div className="flex justify-between text-xs text-neutral-600 mt-1">
-            <span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span>
-          </div>
+        </section>
 
-
-          <p className="mt-2 text-neutral-700">
-            Existe mercado para esta ideia?
-          </p>
-          <input
-            id="avaliacaoMercado" type="range" min={0} max={10}  value={avaliacaoEmpreendedor}  onChange={handleAvaliacaoChange} className="w-full mt-2"
+        <section className="mb-8">
+          <h2 className="text-xl font-semibold mb-4">3. Critério de avaliação: Mercado</h2>
+          <SliderInput
+            id="problemaIdentificado"
+            label="O problema foi identificado?"
+            value={avaliacaoMercado.problemaIdentificado}
+            onChange={(val) => handleMercadoChange("problemaIdentificado", val)}
           />
-          <div className="flex justify-between text-xs text-neutral-600 mt-1">
-            <span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span>
-          </div>
-
-            <p className="mt-2 text-neutral-700">
-              O público-alvo está bem definido?
-          </p>
-          <input
-            id="avaliacaoMercado" type="range" min={0} max={10}  value={avaliacaoEmpreendedor}  onChange={handleAvaliacaoChange} className="w-full mt-2"
+          <SliderInput
+            id="existeMercado"
+            label="Existe mercado para esta ideia?"
+            value={avaliacaoMercado.existeMercado}
+            onChange={(val) => handleMercadoChange("existeMercado", val)}
           />
-          <div className="flex justify-between text-xs text-neutral-600 mt-1">
-            <span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span>
-          </div>
-
-          <p className="mt-2 text-neutral-700">
-            O produto/serviço proposto possui um diferencial junto aos concorrentes? </p>
-              <input
-                id="avaliacaoMercado" type="range" min={0} max={10}  value={avaliacaoEmpreendedor}  onChange={handleAvaliacaoChange} className="w-full mt-2"
-              />
-          <div className="flex justify-between text-xs text-neutral-600 mt-1">
-            <span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span>
-          </div>
-
-
-        </label>
-
-
-        <label className="block mb-6" htmlFor="avaliacaoGestão">
-          <span className="text-xl font-normal text-neutral-800">4. Critério de avaliação: Gestão</span>
-         
-          <p className="mt-2 text-neutral-700">
-            O projeto possui impacto social e ambiental (geração de renda, melhorias de qualidade de vida, ações de sustentabilidade ambiental e melhorias para a sociedade)?
-          </p>
-          <input
-            id="avaliacaoGestão" type="range" min={0} max={10}  value={avaliacaoEmpreendedor}  onChange={handleAvaliacaoChange} className="w-full mt-2"
+          <SliderInput
+            id="publicoAlvoDefinido"
+            label="O público-alvo está bem definido?"
+            value={avaliacaoMercado.publicoAlvoDefinido}
+            onChange={(val) => handleMercadoChange("publicoAlvoDefinido", val)}
           />
-          <div className="flex justify-between text-xs text-neutral-600 mt-1">
-            <span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span>
-          </div>
-
-            <p className="mt-2 text-neutral-700">
-              O projeto possui clareza quantos aos potenciais parceiros e fornecedores?
-          </p>
-          <input
-            id="avaliacaoGestão" type="range" min={0} max={10}  value={avaliacaoEmpreendedor}  onChange={handleAvaliacaoChange} className="w-full mt-2"
+          <SliderInput
+            id="diferencialConcorrentes"
+            label="O produto/serviço proposto possui um diferencial junto aos concorrentes?"
+            value={avaliacaoMercado.diferencialConcorrentes}
+            onChange={(val) => handleMercadoChange("diferencialConcorrentes", val)}
           />
-          <div className="flex justify-between text-xs text-neutral-600 mt-1">
-            <span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span>
-         
-          </div>
-                    <p className="mt-2 text-neutral-700">
-            O projeto possui estrutura mínima para a execução das suas atividades?
-          </p>
-          <input
-            id="avaliacaoGestão" type="range" min={0} max={10}  value={avaliacaoEmpreendedor}  onChange={handleAvaliacaoChange} className="w-full mt-2"
+        </section>
+
+        <section className="mb-8">
+          <h2 className="text-xl font-semibold mb-4">4. Critério de avaliação: Gestão</h2>
+          <SliderInput
+            id="impactoSocialAmbiental"
+            label="O projeto possui impacto social e ambiental?"
+            value={avaliacaoGestao.impactoSocialAmbiental}
+            onChange={(val) => handleGestaoChange("impactoSocialAmbiental", val)}
           />
-          <div className="flex justify-between text-xs text-neutral-600 mt-1">
-            <span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span>
-          </div>
-
-        </label>
-
-                <label className="block mb-6" htmlFor="avaliacaoCapital">
-          <span className="text-xl font-normal text-neutral-800">5. Critério de avaliação: Capital</span>
-         
-          <p className="mt-2 text-neutral-700">
-            O projeto demonstrou clareza sobre os investimentos necessários para desenvolvimento do negócio?
-          </p>
-          <input
-            id="avaliacaoCapital" type="range" min={0} max={10}  value={avaliacaoEmpreendedor}  onChange={handleAvaliacaoChange} className="w-full mt-2"
+          <SliderInput
+            id="clarezaParceirosFornecedores"
+            label="O projeto possui clareza quantos aos potenciais parceiros e fornecedores?"
+            value={avaliacaoGestao.clarezaParceirosFornecedores}
+            onChange={(val) => handleGestaoChange("clarezaParceirosFornecedores", val)}
           />
-          <div className="flex justify-between text-xs text-neutral-600 mt-1">
-            <span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span>
-          </div>
-
-            <p className="mt-2 text-neutral-700">
-              Os empreendedores envolvidos possuem os recursos financeiros necessários para iniciar o desenvolvimento e operação do projeto?
-          </p>
-          <input
-            id="avaliacaoCapital" type="range" min={0} max={10}  value={avaliacaoEmpreendedor}  onChange={handleAvaliacaoChange} className="w-full mt-2"
+          <SliderInput
+            id="estruturaExecucao"
+            label="O projeto possui estrutura mínima para a execução das suas atividades?"
+            value={avaliacaoGestao.estruturaExecucao}
+            onChange={(val) => handleGestaoChange("estruturaExecucao", val)}
           />
-          <div className="flex justify-between text-xs text-neutral-600 mt-1">
-            <span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span>
-         
-          </div>
-                    <p className="mt-2 text-neutral-700">
-            O Já identificou como e onde obtê-los?
-          </p>
-          <input
-            id="avaliacaoCapital" type="range" min={0} max={10}  value={avaliacaoEmpreendedor}  onChange={handleAvaliacaoChange} className="w-full mt-2"
+        </section>
+
+        <section className="mb-8">
+          <h2 className="text-xl font-semibold mb-4">5. Critério de avaliação: Capital</h2>
+          <SliderInput
+            id="clarezaInvestimentos"
+            label="O projeto demonstrou clareza sobre os investimentos necessários para desenvolvimento do negócio?"
+            value={avaliacaoCapital.clarezaInvestimentos}
+            onChange={(val) => handleCapitalChange("clarezaInvestimentos", val)}
           />
-          <div className="flex justify-between text-xs text-neutral-600 mt-1">
-            <span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span>
-          </div>
-
-        </label>
-
-      </label>
-
-                <label className="block mb-6" htmlFor="avaliacaoCapital">
-          <span className="text-xl font-normal text-neutral-800">5. Critério de avaliação: Capital</span>
-         
-          <p className="mt-2 text-neutral-700">
-            O projeto demonstrou clareza sobre os investimentos necessários para desenvolvimento do negócio?
-          </p>
-          <input
-            id="avaliacaoCapital" type="range" min={0} max={10}  value={avaliacaoEmpreendedor}  onChange={handleAvaliacaoChange} className="w-full mt-2"
+          <SliderInput
+            id="recursosFinanceiros"
+            label="Os empreendedores envolvidos possuem os recursos financeiros necessários para iniciar o desenvolvimento e operação do projeto?"
+            value={avaliacaoCapital.recursosFinanceiros}
+            onChange={(val) => handleCapitalChange("recursosFinanceiros", val)}
           />
-          <div className="flex justify-between text-xs text-neutral-600 mt-1">
-            <span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span>
-          </div>
-
-            <p className="mt-2 text-neutral-700">
-              Os empreendedores envolvidos possuem os recursos financeiros necessários para iniciar o desenvolvimento e operação do projeto?
-          </p>
-          <input
-            id="avaliacaoCapital" type="range" min={0} max={10}  value={avaliacaoEmpreendedor}  onChange={handleAvaliacaoChange} className="w-full mt-2"
+          <SliderInput
+            id="identificacaoFontes"
+            label="Já identificou como e onde obtê-los?"
+            value={avaliacaoCapital.identificacaoFontes}
+            onChange={(val) => handleCapitalChange("identificacaoFontes", val)}
           />
-          <div className="flex justify-between text-xs text-neutral-600 mt-1">
-            <span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span>
-         
-          </div>
-                    <p className="mt-2 text-neutral-700">
-            O Já identificou como e onde obtê-los?
-          </p>
-          <input
-            id="avaliacaoCapital" type="range" min={0} max={10}  value={avaliacaoEmpreendedor}  onChange={handleAvaliacaoChange} className="w-full mt-2"
-          />
-          <div className="flex justify-between text-xs text-neutral-600 mt-1">
-            <span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span>
-          </div>
-
-        </label>
-
-
-
-
-
-
-
-
-
-
-
+        </section>
 
         <div className="flex justify-end gap-4">
           <button
-            onClick={handleCancelar}
+            onClick={() => alert("Progresso salvo!")}
             className="px-4 py-2 border border-neutral-300 rounded-md text-neutral-700"
             type="button"
           >
             Salvar progresso
           </button>
           <button
-            onClick={handleProximaSecao}
+             onClick={ () => navigate("/Dashboard")}
             className="px-4 py-2 bg-neutral-900 text-white rounded-md"
             type="button"
           >
-            Próxima seção
-          </button>
+            
         </div>
       </div>
     </div>
   );
-};
+}
