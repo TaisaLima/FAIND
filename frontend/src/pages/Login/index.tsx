@@ -1,15 +1,15 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export default function Login() {
-  const [email, setEmail] = useState("");
-  const [senha, setSenha] = useState("");
+  const [email, setEmail] = useState<string>("");
+  const [senha, setSenha] = useState<string>("");
   const navigate = useNavigate();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log("Login:", { email, senha });
-    navigate("/main-menu"); // força navegação
+    navigate("/MainMenu");
   };
 
   return (
@@ -21,8 +21,9 @@ export default function Login() {
         <h1 className="text-3xl font-bold text-center text-green-600">F.A.I.N.D</h1>
 
         <div className="flex flex-col gap-2">
-          <label className="text-gray-700 font-medium">E-mail</label>
+          <label htmlFor="email" className="text-gray-700 font-medium">E-mail</label>
           <input
+            id="email"
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -32,8 +33,9 @@ export default function Login() {
         </div>
 
         <div className="flex flex-col gap-2">
-          <label className="text-gray-700 font-medium">Senha</label>
+          <label htmlFor="senha" className="text-gray-700 font-medium">Senha</label>
           <input
+            id="senha"
             type="password"
             value={senha}
             onChange={(e) => setSenha(e.target.value)}
