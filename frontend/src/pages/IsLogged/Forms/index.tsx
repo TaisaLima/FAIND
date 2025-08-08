@@ -202,7 +202,33 @@ import { useNavigate } from "react-router-dom";
           </p>
           <input
             id="avaliacaoCapital" type="range" min={0} max={10}  value={avaliacaoEmpreendedor}  onChange={handleAvaliacaoChange} className="w-full mt-2"
-   
+          />
+          <div className="flex justify-between text-xs text-neutral-600 mt-1">
+            <span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span>
+          </div>
+
+            <p className="mt-2 text-neutral-700">
+              Os empreendedores envolvidos possuem os recursos financeiros necessários para iniciar o desenvolvimento e operação do projeto?
+          </p>
+          <input
+            id="avaliacaoCapital" type="range" min={0} max={10}  value={avaliacaoEmpreendedor}  onChange={handleAvaliacaoChange} className="w-full mt-2"
+          />
+          <div className="flex justify-between text-xs text-neutral-600 mt-1">
+            <span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span>
+         
+          </div>
+                    <p className="mt-2 text-neutral-700">
+            O Já identificou como e onde obtê-los?
+          </p>
+          <input
+            id="avaliacaoCapital" type="range" min={0} max={10}  value={avaliacaoEmpreendedor}  onChange={handleAvaliacaoChange} className="w-full mt-2"
+          />
+          <div className="flex justify-between text-xs text-neutral-600 mt-1">
+            <span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span>
+          </div>
+
+        </label>
+
 
 
 
